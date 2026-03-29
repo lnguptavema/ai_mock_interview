@@ -150,14 +150,6 @@ AI Mock Interview Platform Prefilled Code/
 * API Keys (Gemini, AssemblyAI, Murf.ai)
 * Git
 
----
-
-### 1️⃣ Clone & Install
-
-```bash
-git clone https://github.com/Nitish567478/AI-Mock-Interview-Assistant
-cd "AI Mock Interview Platform Prefilled Code"
-```
 
 #### Client
 
