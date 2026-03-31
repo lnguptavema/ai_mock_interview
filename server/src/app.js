@@ -25,18 +25,16 @@ app.use(express.json({ limit: '10mb' }));
 // API routes under /api
 app.use('/api', routes);
 
-// Serve frontend build
+// =======================
+// Serve frontend build (only if client/dist exists, for local dev)
+// =======================
 const clientBuildPath = path.join(__dirname, '../../client/dist');
-app.use(express.static(clientBuildPath));
-
-// =======================
-// Catch-all route for React
-// =======================
-
-// Only for GET requests, not interfering with API routes
-app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(clientBuildPath, 'index.html'));
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.use(express.static(clientBuildPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+}
 
 // =======================
 // ERROR HANDLING
