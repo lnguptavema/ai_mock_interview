@@ -56,7 +56,8 @@ app.use('/api', routes);
 app.use(express.static(path.join(__dirname, '../../client/dist')));
 
 // Catch all handler: send back React's index.html file for client-side routing
-app.get('*', (req, res) => {
+// Catch all handler: send back React's index.html for client-side routing
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
 });
 
