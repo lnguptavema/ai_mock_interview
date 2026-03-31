@@ -22,7 +22,7 @@ const startInterview = async (role, resumeText, totalQuestions) => {
 
 const submitTextAnswer = async (interviewId, answer) => {
   const response = await API.post(`/interview/${interviewId}/answer`, { answer });
-  return response.data.data;
+  return response.data;
 };
 
 const transcribeAudio = async (audioBlob) => {
@@ -37,17 +37,17 @@ const transcribeAudio = async (audioBlob) => {
 
 const submitCode = async (interviewId, code, language) => {
   const response = await API.post(`/interview/${interviewId}/code`, { code, language });
-  return response.data.data;
+  return response.data;
 };
 
 const endInterview = async (interviewId) => {
   const response = await API.post(`/interview/${interviewId}/end`);
-  return response.data.data;
+  return response.data;
 };
 
 const getInterview = async (interviewId) => {
   const response = await API.get(`/interview/${interviewId}`);
-  return response.data.data;
+  return response.data;
 };
 
 export {

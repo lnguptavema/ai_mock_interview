@@ -53,24 +53,77 @@ function InterviewPage() {
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [interviewerText, setInterviewerText] = useState('');
   const [farewellMessage, setFarewellMessage] = useState('');
+  const handleRecordingComplete = async (audioBlob) => {
+  try {
+    setSubmitting(true);
+    setInterviewerState(STATE_THINKING);
 
-  // TODO: Add useEffect to load interview data using getInterview(id)
+    const data = await transcribeAudio(audioBlob);
+    const text = data.text || '';
 
-  // TODO: Implement handleAudioEnded - transition to listening state after audio finishes
+    const res = await submitTextAnswer(id, text);
+    const interview = res.data || res;
 
-  // TODO: Implement resetAnswerFields - clear text, code, evaluation, and fallback state
+    setCurrentQuestion(
+      interview.questions[interview.currentQuestion - 1]
+    );
 
-  // TODO: Implement processAnswerResult - handle interview flow transitions (complete vs next question)
+    setCurrentQuestionNum(interview.currentQuestion);
 
-  // TODO: Implement submitAndProcess - submit text answer and process the result
+    setInterviewerText(
+      interview.messages?.slice(-1)[0]?.content || ''
+    );
 
-  // TODO: Implement handleRecordingComplete - transcribe audio blob then submit as text answer
+    setCurrentAudio(interview.lastAudio);
 
-  // TODO: Implement handleSubmitText - validate and submit typed answer
+    setInterviewerState(STATE_SPEAKING);
 
-  // TODO: Implement handleSubmitCode - evaluate code submission and process result
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to process answer");
+  } finally {
+    setSubmitting(false);
+  }
+};
+const handleAudioEnded = () => {
+  setInterviewerState(STATE_LISTENING);
+};
+useEffect(() => {
+  const fetchInterview = async () => {
+    try {
+      const data = await getInterview(id);
 
-  // TODO: Implement handleEndInterview - end interview and navigate to feedback page
+      console.log("INTERVIEW DATA:", data);
+
+      const interview = data.data; // 🔥 YOUR CASE
+
+      // ✅ QUESTION FIX
+      setCurrentQuestion(interview.questions[interview.currentQuestion - 1]);
+
+      setCurrentQuestionNum(interview.currentQuestion);
+      setTotalQuestions(interview.totalQuestions);
+
+      setInterviewerText(
+        interview.messages?.slice(-1)[0]?.content || ''
+      );
+
+      // 🔥🔥 AUDIO FIX (THIS WAS THE MAIN BUG)
+      setCurrentAudio(interview.lastAudio);
+
+      setInterviewerState(STATE_SPEAKING);
+
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load interview");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (id) {
+    fetchInterview();
+  }
+}, [id]);
 
   if (loading) {
     return (
