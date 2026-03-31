@@ -1,22 +1,9 @@
-// ============================================
-// app.js - Express Application Setup
-// ============================================
-// This file configures the Express app with:
-//   - CORS (so React frontend can talk to us)
-//   - Body parsing (JSON + large payloads)
-//   - API routes
-//   - Error handling
-// ============================================
-
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Import all routes (bundled in one index file)
 import routes from './routes/index.js';
-
-// Import the global error handler
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -26,41 +13,22 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // ============================================
-// MIDDLEWARE (runs on every request, in order)
+// MIDDLEWARE
 // ============================================
 
-// 1. CORS: Allow our frontend (React) to talk to this backend
-//    Without this, browsers will block requests from localhost:5173 → localhost:5000
+// 1. CORS
 app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
 
-// 2. Body Parser: Convert incoming JSON requests to JavaScript objects
-//    10mb limit to handle large resume text and interview data
+// 2. Body Parser
 app.use(express.json({ limit: '10mb' }));
 
-// ============================================
-// ROUTES
-// ============================================
-
-// Mount all API routes under /api
-// /api/auth      → authentication routes
-// /api/interview → interview routes (start, answer, feedback)
-// /api/resume    → resume upload and parsing routes
-// /api/history   → interview history routes
+// 3. API Routes
 app.use('/api', routes);
 
-// ============================================
-// SERVE REACT APP (for production deployment)
-// ============================================
-
-// Serve static files from the React app build directory
+// 4. Serve React build
 app.use(express.static(path.join(__dirname, '../../client/dist')));
 
-// Catch all handler: send back React's index.html file for client-side routing
-// Catch all handler: send back React's index.html for client-side routing
-import { fileURLToPath } from 'url';
-import path from 'path';
-
-// Catch all routes that are NOT API routes
+// 5. Catch-all for frontend routing (non-API routes)
 app.use((req, res, next) => {
   if (!req.path.startsWith('/api')) {
     res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
@@ -70,14 +38,11 @@ app.use((req, res, next) => {
 });
 
 // ============================================
-// ERROR HANDLING (must be AFTER routes)
+// ERROR HANDLING
 // ============================================
 
-// Handle 404 - Route not found
 app.use(notFoundHandler);
-
-// Handle all other errors (500, validation errors, etc.)
 app.use(errorHandler);
 
-// Export the app (used in server.js)
+// Export the app
 export default app;
