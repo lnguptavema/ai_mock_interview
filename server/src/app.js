@@ -10,12 +10,17 @@
 
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Import all routes (bundled in one index file)
 import routes from './routes/index.js';
 
 // Import the global error handler
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ---- Create the Express App ----
 const app = express();
@@ -42,6 +47,18 @@ app.use(express.json({ limit: '10mb' }));
 // /api/resume    → resume upload and parsing routes
 // /api/history   → interview history routes
 app.use('/api', routes);
+
+// ============================================
+// SERVE REACT APP (for production deployment)
+// ============================================
+
+// Serve static files from the React app build directory
+app.use(express.static(path.join(__dirname, '../../client/dist')));
+
+// Catch all handler: send back React's index.html file for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+});
 
 // ============================================
 // ERROR HANDLING (must be AFTER routes)
