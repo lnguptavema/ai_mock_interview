@@ -19,27 +19,28 @@ const app = express();
 // CORS for frontend
 app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173' }));
 
-// JSON parsing with large payloads
+// JSON parsing
 app.use(express.json({ limit: '10mb' }));
 
 // API routes under /api
 app.use('/api', routes);
 
 // Serve frontend build
-app.use(express.static(path.join(__dirname, '../../client/dist')));
+const clientBuildPath = path.join(__dirname, '../../client/dist');
+app.use(express.static(clientBuildPath));
 
 // =======================
-// CATCH-ALL ROUTE for React client
+// Catch-all route for React
 // =======================
-// Matches all routes that do NOT start with /api
+
+// Only for GET requests, not interfering with API routes
 app.get(/^\/(?!api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+  res.sendFile(path.join(clientBuildPath, 'index.html'));
 });
 
 // =======================
 // ERROR HANDLING
 // =======================
-
 app.use(notFoundHandler);
 app.use(errorHandler);
 
