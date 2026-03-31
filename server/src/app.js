@@ -26,17 +26,6 @@ app.use(express.json({ limit: '10mb' }));
 app.use('/api', routes);
 
 // =======================
-// Serve frontend build (only if client/dist exists, for local dev)
-// =======================
-const clientBuildPath = path.join(__dirname, '../../client/dist');
-if (process.env.NODE_ENV !== 'production') {
-  app.use(express.static(clientBuildPath));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(clientBuildPath, 'index.html'));
-  });
-}
-
-// =======================
 // ERROR HANDLING
 // =======================
 app.use(notFoundHandler);
