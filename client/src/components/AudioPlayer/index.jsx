@@ -7,17 +7,16 @@ function AudioPlayer({ audioBase64, autoPlay, onEnded }) {
     if (!audioBase64) return;
 
     if (audioInstance) {
-      audioInstance.pause();
-      audioInstance.src = '';
-    }
+  audioInstance.pause();
+  audioInstance.removeAttribute("src");
+}
 
     const binaryString = atob(audioBase64);
     const bytes = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
       bytes[i] = binaryString.charCodeAt(i);
     }
-
-    const audioBlob = new Blob([bytes], { type: 'audio/mp3' });
+    const audioBlob = new Blob([bytes], { type: 'audio/mpeg' });
     const newUrl = URL.createObjectURL(audioBlob);
     const audio = new Audio(newUrl);
 
@@ -28,10 +27,9 @@ function AudioPlayer({ audioBase64, autoPlay, onEnded }) {
     setAudioInstance(audio);
 
     if (autoPlay) {
-      audio.play().catch((err) => {
-        console.error('Audio autoplay failed:', err.message);
-        if (onEnded) onEnded();
-      });
+      setTimeout(() => {
+  audio.play().catch(() => {});
+}, 100);
     }
 
     return () => {

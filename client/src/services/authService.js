@@ -8,12 +8,12 @@ import API from './api.js';
 
 const register = async (name, email, password) => {
   const response = await API.post('/auth/register', { name, email, password });
-  return response.data.data;
+  return response.data;
 };
 
 const emailLogin = async (email, password) => {
   const response = await API.post('/auth/login', { email, password });
-  return response.data.data;
+  return response.data;
 };
 
 const getMe = async () => {
