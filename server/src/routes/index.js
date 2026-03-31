@@ -5,7 +5,6 @@ import interviewRoutes from './interview.routes.js';
 import historyRoutes from './history.routes.js';
 
 const router = Router();
-
 router.use('/auth', authRoutes);
 router.use('/resume', resumeRoutes);
 router.use('/interview', interviewRoutes);
